@@ -60,7 +60,9 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
       scrollDirection: Axis.vertical,
       children: pokemons.map((pokemon) {
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, "pokemon-detail", arguments: pokemon);
+          },
           onLongPress: () {
             showToast(scaffoldKey: scaffoldKey, text: pokemon.nameCapitalize);
           },
