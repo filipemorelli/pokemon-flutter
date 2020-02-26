@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
+import 'package:pokemon_flutter/classes/pokemon.dart';
 import 'package:pokemon_flutter/globals/functions.dart';
 import 'package:pokemon_flutter/styles/styles.dart';
 
@@ -9,6 +11,14 @@ class PokemonsScreen extends StatefulWidget {
 
 class _PokemonsScreenState extends State<PokemonsScreen> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  PokemonsBloc pokemonsBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    pokemonsBloc = PokemonsBloc();
+    pokemonsBloc.loadPokemons();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,39 +37,57 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
         bottom: false,
         child: Container(
           padding: EdgeInsets.all(kSpaceSize),
-          child: GridView.count(
-            crossAxisCount: 3,
-            mainAxisSpacing: kSpaceSize,
-            crossAxisSpacing: kSpaceSize,
-            scrollDirection: Axis.vertical,
-            children: List.generate(100, (index) {
-              return InkWell(
-                onTap: () {},
-                onLongPress: () {
-                  showToast(scaffoldKey: scaffoldKey, text: "Item: $index");
-                },
-                child: Material(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  color: Colors.white,
-                  child: GridTile(
-                    footer: GridTileBar(
-                      backgroundColor: Colors.black45,
-                      title: Text("Item $index"),
-                    ),
-                    child: Image.network(
-                      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$index.png",
-                      scale: 0.5,
-                    ),
-                  ),
-                ),
-              );
-            }),
+          child: StreamBuilder<List<Pokemon>>(
+            stream: pokemonsBloc.stream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return buildPokemonGridList(pokemons: snapshot.data);
+            },
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildPokemonGridList({@required List<Pokemon> pokemons}) {
+    return GridView.count(
+      crossAxisCount: 3,
+      mainAxisSpacing: kSpaceSize,
+      crossAxisSpacing: kSpaceSize,
+      scrollDirection: Axis.vertical,
+      children: pokemons.map((pokemon) {
+        return InkWell(
+          onTap: () {},
+          onLongPress: () {
+            showToast(scaffoldKey: scaffoldKey, text: pokemon.nameCapitalize);
+          },
+          child: Material(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+            ),
+            clipBehavior: Clip.antiAlias,
+            color: Colors.white,
+            child: GridTile(
+              footer: GridTileBar(
+                backgroundColor: Colors.black45,
+                title: Text(pokemon.nameCapitalize),
+              ),
+              child: Image.network(
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png",
+                loadingBuilder: (ctx, widget, imageChunkEvent) {
+                  if (imageChunkEvent != null) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return widget;
+                },
+                scale: 0.5,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
