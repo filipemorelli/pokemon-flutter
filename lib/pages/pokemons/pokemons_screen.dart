@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
 import 'package:pokemon_flutter/classes/pokemon.dart';
@@ -74,15 +75,12 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
                 backgroundColor: Colors.black45,
                 title: Text(pokemon.nameCapitalize),
               ),
-              child: Image.network(
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png",
-                loadingBuilder: (ctx, widget, imageChunkEvent) {
-                  if (imageChunkEvent != null) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  return widget;
-                },
-                scale: 0.5,
+              child: CachedNetworkImage(
+                imageUrl: pokemon.frontImage,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) =>
+                    CircleAvatar(child: Text(pokemon.name[0])),
               ),
             ),
           ),

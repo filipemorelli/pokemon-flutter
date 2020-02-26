@@ -15,6 +15,9 @@ class Pokemon {
     };
   }
 
+  String get frontImage =>
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png";
+
   /// pega o id do pokemom pela url assim reduzindo a quantidade de chamadas na API
   static String _getId(String url) {
     return url
