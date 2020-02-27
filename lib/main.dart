@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
 import 'package:pokemon_flutter/globals/constants.dart';
 import 'package:pokemon_flutter/globals/routes.dart';
 import 'package:pokemon_flutter/styles/styles.dart';
@@ -6,6 +7,10 @@ import 'package:pokemon_flutter/styles/styles.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  MyApp() {
+    PokemonsBloc();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

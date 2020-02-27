@@ -13,19 +13,17 @@ class PokemonsScreen extends StatefulWidget {
 
 class _PokemonsScreenState extends State<PokemonsScreen> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  PokemonsBloc pokemonsBloc;
 
   @override
   void initState() {
     super.initState();
-    pokemonsBloc = PokemonsBloc();
-    pokemonsBloc.loadPokemons();
+    PokemonsBloc.instance.loadPokemons();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Pokemon>>(
-      stream: pokemonsBloc.stream,
+      stream: PokemonsBloc.instance.stream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return LoadingScreen();

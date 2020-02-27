@@ -13,7 +13,11 @@ class PokemonsBloc {
   Stream<List<Pokemon>> get stream => _streamController.stream;
   Stream<int> get streamItems => _streamControllerItens.stream;
 
-  PokemonsBloc() {
+  static final PokemonsBloc instance = PokemonsBloc._();
+
+  factory PokemonsBloc() => instance;
+
+  PokemonsBloc._() {
     _streamController = StreamController.broadcast();
     _streamControllerItens = StreamController.broadcast();
   }
