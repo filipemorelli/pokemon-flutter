@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
 import 'package:pokemon_flutter/classes/pokemon.dart';
 import 'package:pokemon_flutter/globals/functions.dart';
+import 'package:pokemon_flutter/pages/loading/loading_screen.dart';
 import 'package:pokemon_flutter/styles/styles.dart';
 
 class PokemonsScreen extends StatefulWidget {
@@ -22,32 +23,32 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        title: Text("Pokémons"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
+    return StreamBuilder<List<Pokemon>>(
+      stream: pokemonsBloc.stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return LoadingScreen();
+        }
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            title: Text("Pokémons"),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {},
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: Container(
-          padding: EdgeInsets.all(kSpaceSize),
-          child: StreamBuilder<List<Pokemon>>(
-            stream: pokemonsBloc.stream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return buildPokemonGridList(pokemons: snapshot.data);
-            },
+          body: SafeArea(
+            bottom: false,
+            child: Container(
+              padding: EdgeInsets.all(kSpaceSize),
+              child: buildPokemonGridList(pokemons: snapshot.data),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
