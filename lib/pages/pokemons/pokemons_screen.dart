@@ -42,9 +42,11 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
           ),
           body: SafeArea(
             bottom: false,
-            child: Container(
-              padding: EdgeInsets.all(kSpaceSize),
-              child: buildPokemonGridList(pokemons: snapshot.data),
+            child: Scrollbar(
+              child: Container(
+                padding: EdgeInsets.all(kSpaceSize),
+                child: buildPokemonGridList(pokemons: snapshot.data),
+              ),
             ),
           ),
         );
