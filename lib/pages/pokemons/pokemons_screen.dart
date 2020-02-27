@@ -55,44 +55,49 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
   }
 
   Widget buildPokemonGridList({@required List<Pokemon> pokemons}) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: kSpaceSize,
-        crossAxisSpacing: kSpaceSize,
-      ),
-      itemCount: pokemons.length,
-      itemBuilder: (ctx, index) {
-        print(index);
-        return InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, "pokemon-detail",
-                arguments: pokemons[index]);
-          },
-          onLongPress: () {
-            showToast(
-                scaffoldKey: scaffoldKey, text: pokemons[index].nameCapitalize);
-          },
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
-            clipBehavior: Clip.antiAlias,
-            color: Colors.white,
-            child: GridTile(
-              footer: GridTileBar(
-                backgroundColor: Colors.black45,
-                title: Text(pokemons[index].nameCapitalize),
-              ),
-              child: Hero(
-                tag: pokemons[index].name,
-                child: Image.network(
-                  pokemons[index].frontImage,
-                  scale: 0.5,
+    return OrientationBuilder(
+      builder: (context, orientarion) {
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: (orientarion == Orientation.portrait) ? 3 : 4,
+            mainAxisSpacing: kSpaceSize,
+            crossAxisSpacing: kSpaceSize,
+          ),
+          itemCount: pokemons.length,
+          itemBuilder: (ctx, index) {
+            print(index);
+            return InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, "pokemon-detail",
+                    arguments: pokemons[index]);
+              },
+              onLongPress: () {
+                showToast(
+                    scaffoldKey: scaffoldKey,
+                    text: pokemons[index].nameCapitalize);
+              },
+              child: Material(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                color: Colors.white,
+                child: GridTile(
+                  footer: GridTileBar(
+                    backgroundColor: Colors.black45,
+                    title: Text(pokemons[index].nameCapitalize),
+                  ),
+                  child: Hero(
+                    tag: pokemons[index].name,
+                    child: Image.network(
+                      pokemons[index].frontImage,
+                      scale: 0.5,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
