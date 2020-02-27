@@ -20,8 +20,8 @@ class _LoadingScreenState extends State<LoadingScreen>
 
   @override
   void dispose() {
-    super.dispose();
     rotationController.dispose();
+    super.dispose();
   }
 
   @override
