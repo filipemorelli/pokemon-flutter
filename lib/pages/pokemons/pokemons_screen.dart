@@ -3,6 +3,7 @@ import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
 import 'package:pokemon_flutter/classes/pokemon.dart';
 import 'package:pokemon_flutter/globals/functions.dart';
 import 'package:pokemon_flutter/pages/loading/loading_screen.dart';
+import 'package:pokemon_flutter/pages/widgets/popup_menu_button_pokemons.dart';
 import 'package:pokemon_flutter/styles/styles.dart';
 
 class PokemonsScreen extends StatefulWidget {
@@ -38,6 +39,7 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
                 icon: Icon(Icons.search),
                 onPressed: () {},
               ),
+              PopupMenuButtonPokemons()
             ],
           ),
           body: SafeArea(

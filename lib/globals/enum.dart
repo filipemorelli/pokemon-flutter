@@ -1,0 +1,1 @@
+enum PokemonsPopupMenuButtonTypes { settings, notFound }
