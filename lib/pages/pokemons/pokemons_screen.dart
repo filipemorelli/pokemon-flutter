@@ -3,6 +3,7 @@ import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
 import 'package:pokemon_flutter/classes/pokemon.dart';
 import 'package:pokemon_flutter/globals/functions.dart';
 import 'package:pokemon_flutter/pages/loading/loading_screen.dart';
+import 'package:pokemon_flutter/pages/widgets/popup_menu_button_pokemons.dart';
 import 'package:pokemon_flutter/styles/styles.dart';
 
 class PokemonsScreen extends StatefulWidget {
@@ -12,19 +13,17 @@ class PokemonsScreen extends StatefulWidget {
 
 class _PokemonsScreenState extends State<PokemonsScreen> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
-  PokemonsBloc pokemonsBloc;
 
   @override
   void initState() {
     super.initState();
-    pokemonsBloc = PokemonsBloc();
-    pokemonsBloc.loadPokemons();
+    PokemonsBloc.instance.loadPokemons();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Pokemon>>(
-      stream: pokemonsBloc.stream,
+      stream: PokemonsBloc.instance.stream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return LoadingScreen();
@@ -38,13 +37,16 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
                 icon: Icon(Icons.search),
                 onPressed: () {},
               ),
+              PopupMenuButtonPokemons()
             ],
           ),
           body: SafeArea(
             bottom: false,
-            child: Container(
-              padding: EdgeInsets.all(kSpaceSize),
-              child: buildPokemonGridList(pokemons: snapshot.data),
+            child: Scrollbar(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: kSpaceSize),
+                child: buildPokemonGridList(pokemons: snapshot.data),
+              ),
             ),
           ),
         );
@@ -53,41 +55,51 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
   }
 
   Widget buildPokemonGridList({@required List<Pokemon> pokemons}) {
-    return GridView.count(
-      crossAxisCount: 3,
-      mainAxisSpacing: kSpaceSize,
-      crossAxisSpacing: kSpaceSize,
-      scrollDirection: Axis.vertical,
-      children: pokemons.map((pokemon) {
-        return InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, "pokemon-detail", arguments: pokemon);
-          },
-          onLongPress: () {
-            showToast(scaffoldKey: scaffoldKey, text: pokemon.nameCapitalize);
-          },
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
-            clipBehavior: Clip.antiAlias,
-            color: Colors.white,
-            child: GridTile(
-              footer: GridTileBar(
-                backgroundColor: Colors.black45,
-                title: Text(pokemon.nameCapitalize),
-              ),
-              child: Hero(
-                tag: pokemon.name,
-                child: Image.network(
-                  pokemon.frontImage,
-                  scale: 0.5,
+    return OrientationBuilder(
+      builder: (context, orientarion) {
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: (orientarion == Orientation.portrait) ? 3 : 4,
+            mainAxisSpacing: kSpaceSize,
+            crossAxisSpacing: kSpaceSize,
+          ),
+          itemCount: pokemons.length,
+          itemBuilder: (ctx, index) {
+            print(index);
+            return InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, "pokemon-detail",
+                    arguments: pokemons[index]);
+              },
+              onLongPress: () {
+                showToast(
+                    scaffoldKey: scaffoldKey,
+                    text: pokemons[index].nameCapitalize);
+              },
+              child: Material(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                color: Colors.white,
+                child: GridTile(
+                  footer: GridTileBar(
+                    backgroundColor: Colors.black45,
+                    title: Text(pokemons[index].nameCapitalize),
+                  ),
+                  child: Hero(
+                    tag: pokemons[index].name,
+                    child: Image.network(
+                      pokemons[index].frontImage,
+                      scale: 0.5,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
-      }).toList(),
+      },
     );
   }
 }
