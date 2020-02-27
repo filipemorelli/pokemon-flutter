@@ -77,12 +77,15 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
                 backgroundColor: Colors.black45,
                 title: Text(pokemon.nameCapitalize),
               ),
-              child: CachedNetworkImage(
-                imageUrl: pokemon.frontImage,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) =>
-                    CircleAvatar(child: Text(pokemon.name[0])),
+              child: Hero(
+                tag: pokemon.name,
+                child: CachedNetworkImage(
+                  imageUrl: pokemon.frontImage,
+                  placeholder: (context, url) =>
+                      Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) =>
+                      CircleAvatar(child: Text(pokemon.name[0])),
+                ),
               ),
             ),
           ),
