@@ -44,7 +44,7 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
             bottom: false,
             child: Scrollbar(
               child: Container(
-                padding: EdgeInsets.all(kSpaceSize),
+                padding: EdgeInsets.symmetric(horizontal: kSpaceSize),
                 child: buildPokemonGridList(pokemons: snapshot.data),
               ),
             ),
@@ -55,18 +55,23 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
   }
 
   Widget buildPokemonGridList({@required List<Pokemon> pokemons}) {
-    return GridView.count(
-      crossAxisCount: 3,
-      mainAxisSpacing: kSpaceSize,
-      crossAxisSpacing: kSpaceSize,
-      scrollDirection: Axis.vertical,
-      children: pokemons.map((pokemon) {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: kSpaceSize,
+        crossAxisSpacing: kSpaceSize,
+      ),
+      itemCount: pokemons.length,
+      itemBuilder: (ctx, index) {
+        print(index);
         return InkWell(
           onTap: () {
-            Navigator.pushNamed(context, "pokemon-detail", arguments: pokemon);
+            Navigator.pushNamed(context, "pokemon-detail",
+                arguments: pokemons[index]);
           },
           onLongPress: () {
-            showToast(scaffoldKey: scaffoldKey, text: pokemon.nameCapitalize);
+            showToast(
+                scaffoldKey: scaffoldKey, text: pokemons[index].nameCapitalize);
           },
           child: Material(
             shape: RoundedRectangleBorder(
@@ -77,19 +82,19 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
             child: GridTile(
               footer: GridTileBar(
                 backgroundColor: Colors.black45,
-                title: Text(pokemon.nameCapitalize),
+                title: Text(pokemons[index].nameCapitalize),
               ),
               child: Hero(
-                tag: pokemon.name,
+                tag: pokemons[index].name,
                 child: Image.network(
-                  pokemon.frontImage,
+                  pokemons[index].frontImage,
                   scale: 0.5,
                 ),
               ),
             ),
           ),
         );
-      }).toList(),
+      },
     );
   }
 }
