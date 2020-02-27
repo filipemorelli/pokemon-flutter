@@ -40,7 +40,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             child: Center(
               child: Image.asset(
                 "assets/image/logo_transparent.png",
-                width: 96,
+                width: imagePokemonSize,
               ),
             ),
           ),
