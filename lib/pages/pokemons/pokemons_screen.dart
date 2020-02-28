@@ -37,7 +37,6 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
                 icon: Icon(Icons.search),
                 onPressed: () {},
               ),
-              PopupMenuButtonPokemons()
             ],
           ),
           body: SafeArea(
