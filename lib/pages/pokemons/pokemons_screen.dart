@@ -27,9 +27,6 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
       searchAppBar: searchAppBar(),
     );
     _search = TextEditingController();
-    _search.addListener(() {
-      print(_search.text);
-    });
   }
 
   @override
@@ -51,16 +48,15 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
           labelStyle: TextStyle(color: Colors.white),
           hintStyle: TextStyle(color: Colors.white),
         ),
-        onSaved: (v) {
-          log(v, name: "onSaved");
-        },
-        onFieldSubmitted: (v) {
-          log(v, name: "onFieldSubmitted");
+        onFieldSubmitted: (value) {
+          PokemonsBloc.instance.setFilter(value);
         },
       ),
       leading: IconButton(
         icon: Icon(Icons.close),
         onPressed: () {
+          _search.clear();
+          PokemonsBloc.instance.setFilter(null);
           _searchBloc.setStartAppBar();
         },
       ),
