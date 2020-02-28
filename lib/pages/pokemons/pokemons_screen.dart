@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:pokemon_flutter/bloc/pokemons_bloc.dart';
+import 'package:pokemon_flutter/bloc/search_bloc.dart';
 import 'package:pokemon_flutter/classes/pokemon.dart';
 import 'package:pokemon_flutter/globals/functions.dart';
 import 'package:pokemon_flutter/pages/loading/loading_screen.dart';
-import 'package:pokemon_flutter/pages/widgets/popup_menu_button_pokemons.dart';
 import 'package:pokemon_flutter/styles/styles.dart';
 
 class PokemonsScreen extends StatefulWidget {
@@ -13,11 +15,70 @@ class PokemonsScreen extends StatefulWidget {
 
 class _PokemonsScreenState extends State<PokemonsScreen> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  SearchBloc _searchBloc;
+  TextEditingController _search;
 
   @override
   void initState() {
     super.initState();
     PokemonsBloc.instance.loadPokemons();
+    _searchBloc = SearchBloc(
+      startAppBar: startAppBar(),
+      searchAppBar: searchAppBar(),
+    );
+    _search = TextEditingController();
+    _search.addListener(() {
+      print(_search.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchBloc.dispose();
+    super.dispose();
+  }
+
+  AppBar searchAppBar() {
+    return AppBar(
+      title: TextFormField(
+        controller: _search,
+        autocorrect: true,
+        enableSuggestions: true,
+        textInputAction: TextInputAction.go,
+        decoration: InputDecoration(
+          border: UnderlineInputBorder(),
+          hintText: 'Search...',
+          labelStyle: TextStyle(color: Colors.white),
+          hintStyle: TextStyle(color: Colors.white),
+        ),
+        onSaved: (v) {
+          log(v, name: "onSaved");
+        },
+        onFieldSubmitted: (v) {
+          log(v, name: "onFieldSubmitted");
+        },
+      ),
+      leading: IconButton(
+        icon: Icon(Icons.close),
+        onPressed: () {
+          _searchBloc.setStartAppBar();
+        },
+      ),
+    );
+  }
+
+  AppBar startAppBar() {
+    return AppBar(
+      title: Text("Pokémons"),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            _searchBloc.setSearchppBar();
+          },
+        ),
+      ],
+    );
   }
 
   @override
@@ -30,14 +91,18 @@ class _PokemonsScreenState extends State<PokemonsScreen> {
         }
         return Scaffold(
           key: scaffoldKey,
-          appBar: AppBar(
-            title: Text("Pokémons"),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {},
-              ),
-            ],
+          appBar: PreferredSize(
+            preferredSize: Size(double.infinity, kToolbarHeight),
+            child: StreamBuilder<AppBar>(
+              initialData: startAppBar(),
+              stream: _searchBloc.stream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return SizedBox();
+                }
+                return snapshot.data;
+              },
+            ),
           ),
           body: SafeArea(
             bottom: false,
